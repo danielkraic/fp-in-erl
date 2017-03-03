@@ -35,12 +35,20 @@ show_file_contents([L|Ls]) ->
  show_file_contents([]) ->
     ok.
 
+
 % index file
+% create index of all words in file and print index to output
 index_file(File) ->
   Lines = get_file_contents(File),
   Index = create_index(format_lines(Lines)),
   print_index(Index).
 
+
+%
+% getting file lines
+%
+
+% format file lines for as index input (unique list of words for every line)
 format_lines(Lines) ->
   lists:map(fun(Line) -> format_line(Line) end, Lines).
 
@@ -76,19 +84,23 @@ make_unique_list([X|Xs], Out) ->
     end.
 
 
+%
+% create index
+%
+
 % create file index (index is stored in orddict)
 create_index(Lines) ->
     Index = orddict:new(),
     index_lines(1, Lines, Index).
 
-% index line (index every word in line)
+% indexs lines
 index_lines(_LineNumber, [], Index) ->
     Index;
 index_lines(LineNumber, [Line|Lines], Index) ->
     NewIndex = index_line(LineNumber, Line, Index),
     index_lines(LineNumber+1, Lines, NewIndex).
 
-% index single word
+% index single line (index every word in line)
 index_line(_LineNumber, [], Index) ->
     Index;
 index_line(LineNumber, [Word|Words], Index) ->
@@ -101,38 +113,39 @@ index_line(LineNumber, [Word|Words], Index) ->
             index_line(LineNumber, Words, UpdatedIndex)
     end.
 
+
+%
+% print index
+%
+
 % print index
 print_index(Index) ->
     IndexList = orddict:to_list(Index),
     print_index_list(IndexList).
 
+% print every items in index
 print_index_list([]) ->
     ok;
 print_index_list([H|T]) ->
     print_index_item(H),
     print_index_list(T).
 
+% print single index item
 print_index_item({Key, Value}) ->
     io:format("{"),
     io:format("~p", [Key]),
     print_list(Value),
     io:format("}~n").
 
+% print list
 print_list(List) ->
         io:format("["),
-        fnl(List),
+        print_list_item(List),
         io:format("]").
 
-fnl([]) ->
+print_list_item([]) ->
   ok;
-fnl([H|T]) ->
+print_list_item([H|T]) ->
   io:format("~p,", [H]),
-  fnl(T).
+  print_list_item(T).
 
-%.fnl([H]) ->
-%    io:format("~p", [H]);
-%fnl([H|T]) ->
-%    io:format("~p,", [H]),
-%    fnl(T);
-%fnl([]) ->
-%    ok.

@@ -306,3 +306,116 @@ perf(_,0,_) -> false;
 perf(N,C,S) when N rem C == 0 -> perf(N,C-1,S+C);
 perf(N,C,S) -> perf(N, C-1, S).
 ```
+
+# lists
+
+* collection of elements - [1,2,3]
+* order matters [2,3,4] != [2,4,3]
+* multiplicity matters [2,3,4] != [2,4,4,3]
+
+* every nonempty list mathes pattern *[X|Xs]*
+    * X - first element - *head*
+    * X - rest of list - *tail*
+    * eg. [2,3,4,5], X = 2, Xs = [3,4,5]
+
+```erlang
+head([X|_Xs]) -> X.
+tail([_X|Xs]) -> Xs.
+```
+
+```erlang
+second_v1(Xs) -> head(tail(Xs)).
+second_v2([_X,Y|_Zs]) -> Y.
+```
+
+```erlang
+A = [1,2,4,1,3].
+[2,3|A]. % [2,3,1,2,4,1,3]
+
+[2|[1,3|[4|[]]]]. % [2,1,3,4]
+
+hd([1,2,3]). % 1
+tl([1,2,3]). % [2,3]
+```
+
+## case
+
+```erlang
+case [2,3,4] of
+ [X,Y|_] -> X+Y;
+ [S] -> S;
+ _ -> 0
+end.
+
+case [6] of
+ [X,Y|_] -> X+Y;
+ [S] -> S;
+ _ -> 0
+end.
+
+case [] of
+ [X,Y|_] -> X+Y;
+ [S] -> S;
+ _ -> 0
+end.
+```
+
+## function over lists
+
+```erlang
+% every list is build of elements added to empty list
+% build list with [...|...]
+[2,3,1] = [2|[3|1|[]]]
+```
+
+### reduce
+
+```erlang
+% direct recursion
+sum([]) -> 0;
+sum([X|Xs]) -> X + sum(Xs).
+```
+
+```erlang
+% tail recursion
+sum(Xs) -> sum(Xs,0).
+
+sum([],S) -> S;
+sum([X|Xs], S) -> sum(Xs, X+S).
+```
+
+### map
+
+```erlang
+total_area(shapes) ->
+    sum(all_areas(shaped)).
+
+all_areas([]) -> [];
+all_areas([X,Xs]) -> [area(X) | all_areas(Xs)]
+```
+
+### filter
+
+```erlang
+circles([]) -> [];
+circles( [ {circle,{_,_},_} = C | Xs ]) ->
+    [ C | circles(Xs) ];
+circles( [ {rectangle,{_,_},_,_} | Xs ]) ->
+    circles(Xs).
+```
+
+```erlang
+circles([]) -> [];
+circles( [ X | Xs ]) ->
+    case X of
+        {circle,{_,_},_} = C ->
+            [ C | circles(Xs) ];
+        _ ->
+            circles(Xs)
+    end.
+```
+
+* function spec
+```erlang
+-spec take(integer(), [T]) -> [T].
+```

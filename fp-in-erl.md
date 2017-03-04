@@ -419,3 +419,7 @@ circles( [ X | Xs ]) ->
 ```erlang
 -spec take(integer(), [T]) -> [T].
 ```
+
+tools:
+https://www.youtube.com/watch?v=QhtGJ70FRHk&list=PLR812eVbehlxQ9hShYU-HHLUzDzErGR7N
+https://www.youtube.com/watch?v=7nsIC_1VzvQ&list=PLR812eVbehlxQ9hShYU-HHLUzDzErGR7N

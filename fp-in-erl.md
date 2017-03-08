@@ -420,6 +420,85 @@ circles( [ X | Xs ]) ->
 -spec take(integer(), [T]) -> [T].
 ```
 
-tools:
-https://www.youtube.com/watch?v=QhtGJ70FRHk&list=PLR812eVbehlxQ9hShYU-HHLUzDzErGR7N
-https://www.youtube.com/watch?v=7nsIC_1VzvQ&list=PLR812eVbehlxQ9hShYU-HHLUzDzErGR7N
+# higher-order functions
+
+## functions as arguments
+
+* map, filter, zipwith, foldr
+
+### map
+
+```erlang
+map(_F, []) ->
+    [];
+map(F, [X|Xs]) ->
+    [F(X) | map(F, Xs)].
+```
+
+### filter
+
+```erlang
+filter(_P, []) ->
+    [];
+filter(P, [X|Xs]) ->
+    case P(X) of
+        true -> [X | filter(P, Xs)];
+        false -> filter(P, Xs)
+    end.
+```
+
+### reduce
+
+
+```erlang
+reduce(Combine, Start, []) ->
+    Start;
+reduce(Combine, Start, [X|Xs]) ->
+    Combine(X, reduce(Combine, Start, Xs)).
+
+sum(Xs) -> reduce(fun (X,Y) -> X+Y end, 0, Xs).
+```
+
+## functions as results
+
+## partially applied functions
+
+* curried functions
+
+```erlang
+add(X) ->
+    fun(Y) -> X+Y end.
+
+addOneToAll(Xs) ->
+    lists:map(add(1), Xs).
+
+addNToAll(N, Xs) ->
+    lists:map(add(N), Xs).
+```
+
+```erlang
+Add = fun (X,Y) -> X+Y end.
+Sum = fun (Xs) -> lists:foldr(Add,0,Xs) end.
+
+Sum([1,2,3,4]).
+```
+
+```erlang
+EmptyTest = fun ([]) -> true ; ([_|_]) -> false end.
+```
+
+```erlang
+Foo = fun Product([]) -> 1 ; Product([X|Xs]) -> X*Product(Xs) end.
+```
+
+## functions as arguments and results
+
+* compose
+* iterate
+
+## compose
+
+```erlang
+compose(F, G) ->
+    fun(X) -> G(F(X)) end.
+```
